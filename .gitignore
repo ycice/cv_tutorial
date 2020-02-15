@@ -112,3 +112,9 @@ ENV/
 *.pyc
 
 .DS_Store
+
+prj1_mnist/data/MNIST
+prj1_mnist/saved_model
+
+prj2_CIFAR10/data
+prj2_CIFAR10/saved_model
