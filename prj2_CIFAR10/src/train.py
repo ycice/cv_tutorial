@@ -4,13 +4,15 @@ from torch import optim
 from util import save_model
 from prj2_CIFAR10.src.model import DeepConvModel
 from prj2_CIFAR10.src.dataloader import get_dataloader
-from prj2_CIFAR10.src.constants import LEARNING_RATE, MOMENTUM, EPOCH
+from prj2_CIFAR10.src.constants import LEARNING_RATE, MOMENTUM, EPOCH, device
 
 
 def train():
     train_loader, test_loader = get_dataloader()
 
     model = DeepConvModel()
+    model.to(device)
+
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=LEARNING_RATE, momentum=MOMENTUM, weight_decay=0.0001)
 
@@ -18,6 +20,10 @@ def train():
         for step_index, (x_train, y_gt) in enumerate(train_loader):
             model.train()
             optimizer.zero_grad()
+
+            x_train = x_train.to(device)
+            y_gt = y_gt.to(device)
+
             y_pred: torch.FloatTensor = model(x_train)
 
             loss = criterion(y_pred, y_gt)
@@ -43,6 +49,9 @@ def train():
                 top5_error = 0
                 total_items = len(test_loader.dataset)
                 for test_step, (x_test, y_test_gt) in enumerate(test_loader):
+                    x_test = x_test.to(device)
+                    y_test_gt = y_test_gt.to(device)
+
                     y_test_pred: torch.FloatTensor = model(x_test)
                     y_test_argmax = y_test_pred.argmax(dim=1)
                     total_correct += int(sum((y_test_gt == y_test_argmax).int()))
