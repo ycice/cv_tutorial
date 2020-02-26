@@ -17,8 +17,3 @@ def dataloader():
     test_dataloader = DataLoader(dataset=arg_test_dataset, batch_size=BATCH_SIZE, shuffle=False)
     return train_dataloader, test_dataloader
 
-
-if __name__ == '__main__':
-    train_set = dataloader()
-    for x, y in train_set:
-        print(1)

@@ -29,8 +29,8 @@ class AgNews(Dataset):
         return x, y
 
 
-def pickle_dump(arg_dataset):
-    with open(PICKLE_TEST_PATH, 'wb') as f:
+def pickle_dump(arg_dataset, path):
+    with open(path, 'wb') as f:
         pickle.dump(arg_dataset, f)
 
 
@@ -49,9 +49,11 @@ def build_dataset(path):
             output_lists.append([int(row[0])])
 
     arg_dataset = AgNews(input_lists, output_lists)
-
-    pickle_dump(arg_dataset)
+    return arg_dataset
 
 
 if __name__ == '__main__':
-    build_dataset(TEST_PATH)
+    arg_train = build_dataset(TRAIN_PATH)
+    arg_test = build_dataset(TEST_PATH)
+    pickle_dump(arg_train, PICKLE_TRAIN_PATH)
+    pickle_dump(arg_test, PICKLE_TEST_PATH)

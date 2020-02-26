@@ -1,6 +1,6 @@
 import torch
 from torch import optim, nn
-from pytorch_transformers import BertModel
+from pytorch_transformers import BertModel, AdamW
 from constants import device, EPOCH, LEARNING_RATE, MOMENTUM
 from dataloader import dataloader
 from dataset import AgNews  # class를 사용하기 위해서는 불러와야됨
@@ -11,11 +11,13 @@ bert_fc_model: torch.nn.Module = BertFc()
 origin_bert_model.to(device)
 bert_fc_model.to(device)
 
-optimizer = optim.SGD(bert_fc_model.parameters(), lr=LEARNING_RATE, momentum=MOMENTUM)
+optimizer_fc = optim.SGD(bert_fc_model.parameters(), lr=LEARNING_RATE, momentum=MOMENTUM)
+optimizer_bert = AdamW(origin_bert_model.parameters(), lr=2e-5, eps=1e-8)
 criterion = nn.CrossEntropyLoss()
 train_set, test_set = dataloader()
 
 for epoch in range(EPOCH):
+    losses = []
     for index, (x_train, y_trian_gt) in enumerate(train_set):
         bert_fc_model.train()
 
@@ -23,19 +25,26 @@ for epoch in range(EPOCH):
         y_trian_gt = (y_trian_gt.T[0] - 1).to(device)  # 클래스값이 0부터 시작해야되므로 1씩 빼준다.
         # 강제로 dim을 맞췄는데...?
 
+        optimizer_fc.zero_grad()
+        optimizer_bert.zero_grad()
+
         with torch.no_grad():
             output = origin_bert_model(x_train)
             cls = output[1]
 
-        optimizer.zero_grad()
         y_pred = bert_fc_model(cls)
         loss = criterion(y_pred, y_trian_gt)
         loss.backward()
-        optimizer.step()
+        optimizer_bert.step()
+        optimizer_fc.step()
+
+        losses.append(loss)   # loss의 평균값을 구하기 위해
 
         if index % 100 == 0:
             accuracy = int(sum((y_pred.argmax(dim=1) == y_trian_gt).int())) / x_train.shape[0]
-            print(f'{epoch}_{index} train accuracy is {accuracy}')
+            print(f'{epoch}_{index} train accuracy is {accuracy}, loss is {sum(losses) / len(losses)}')
+
+            losses = []
 
         if index % 1000 == 0:
             bert_fc_model.eval()
