@@ -2,7 +2,7 @@ import torch
 from torch import nn
 from torch import optim
 
-from dataloader import get_dataloader
+from dataset import get_dataloader
 from util import save_model
 from model import LinearMnistModel, ConvMnistModel
 from constants import LEARNING_RATE, NUM_EPOCH, device

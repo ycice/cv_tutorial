@@ -10,7 +10,7 @@ from prj2_CIFAR10.src.constants import LEARNING_RATE, MOMENTUM, EPOCH, device
 def train():
     train_loader, test_loader = get_dataloader()
 
-    model = DeepConvModel()
+    model: torch.nn.Module = DeepConvModel()
     model.to(device)
 
     criterion = nn.CrossEntropyLoss()
@@ -72,5 +72,4 @@ if __name__ == '__main__':
     train()
     # 8 layers-test accuracy : 0.716
     # 10 layers-test accuracy : 0.731
-    # residual 13 layers : 0.712
-    # residual 20 layers : 0.722
+    # residual 20 layers :

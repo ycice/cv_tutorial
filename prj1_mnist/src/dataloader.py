@@ -1,7 +1,7 @@
 from torchvision import datasets as dset
 from torchvision import transforms
 from torch.utils.data import DataLoader
-from constants import DATASET_DIR, BATCH_SIZE
+from prj1_mnist.src.constants import DATASET_DIR, BATCH_SIZE
 
 
 def get_dataloader():
